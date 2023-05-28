@@ -1,6 +1,7 @@
 # Directories
 .vs/
 .vscode
+.history/
 bin/
 bin-int/
 
