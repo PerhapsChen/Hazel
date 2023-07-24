@@ -39,8 +39,11 @@ enum EventCategory
 
 class HAZEL_API Event
 {
-    friend class EventDispatcher; // 事件分发器
+    //friend class EventDispatcher; // 事件分发器
 public:
+
+    bool Handled = false;
+
     virtual EventType GetEventType() const = 0;
     virtual const char* GetName() const = 0;
     virtual int GetCategoryFlags() const = 0;
@@ -50,8 +53,7 @@ public:
     {
         return GetCategoryFlags() & category;
     }
-protected:
-    bool m_Handled = false;
+
 };
 
 class EventDispatcher
@@ -71,7 +73,7 @@ public:
         // 判断事件类型是否为 T 类型，如果是，则调用 func 函数
         if (m_Event.GetEventType() == T::GetStaticType())
         {
-            m_Event.m_Handled = func(*(T*)&m_Event);
+            m_Event.Handled = func(*(T*)&m_Event);
             return true;
         }
         return false;
@@ -85,4 +87,5 @@ inline std::ostream& operator<<(std::ostream& os, const Event& e)
 {
     return os << e.ToString();
 }
-}
+
+} // end of Hazel::
