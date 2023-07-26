@@ -1,15 +1,17 @@
 #include <Hazel.h>
 #include <Hazel/Core/EntryPoint.h>
 
-#include "Sandbox2D.h"
-#include "ExampleLayer.h"
+//#include "Sandbox2D.h"
+//#include "ExampleLayer.h"
+
+#include "GameLayer.h"
 
 class Sandbox : public Hazel::Application
 {
 public:
 	Sandbox()
 	{
-		PushLayer(new Sandbox2D());
+		PushLayer(new GameLayer());
 	}
 
 	~Sandbox()
