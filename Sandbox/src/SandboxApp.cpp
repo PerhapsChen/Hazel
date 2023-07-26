@@ -9,7 +9,7 @@ class Sandbox : public Hazel::Application
 public:
 	Sandbox()
 	{
-		PushLayer(new Sandbox2D()); // 在上方定义
+		PushLayer(new Sandbox2D());
 	}
 
 	~Sandbox()

@@ -25,15 +25,15 @@ namespace Hazel {
 		HZ_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		// 初始化 窗口
-		m_Window = Window::Create();
+		// Create() 初始化窗口信息并设置glfw回调函数; 然后设置窗口回调函数
+		m_Window = Window::Create(); 
 		m_Window->SetEventCallback(HZ_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();
 
 		// 初始化 Imgui层 并添加到 Overlay
 		m_ImGuiLayer = new ImGuiLayer();
-		PushOverlay(m_ImGuiLayer);
+		PushOverlay(m_ImGuiLayer);	// ImGui初始化
 	}
 
 	Application::~Application()
@@ -79,7 +79,7 @@ namespace Hazel {
 	void Application::Run()
 	{
 		HZ_PROFILE_FUNCTION();
-		//? 引擎主循环
+		//? -------- 引擎主循环 ---------
 		while (m_Running)
 		{
 			HZ_PROFILE_FUNCTION("RunLoop");
@@ -95,7 +95,7 @@ namespace Hazel {
 					HZ_PROFILE_SCOPE("LayerStack OnUpdate");
 
 					for (Layer* layer : m_LayerStack)
-						layer->OnUpdate(timestep);
+						layer->OnUpdate(timestep); //? 每层更新
 				}
 			}
 
@@ -104,11 +104,11 @@ namespace Hazel {
 				HZ_PROFILE_SCOPE("LayerStack OnImGuiRender");
 
 				for (Layer* layer : m_LayerStack)
-					layer->OnImGuiRender();
+					layer->OnImGuiRender();	//? !!! 每层ImGui更新
 			}
 			m_ImGuiLayer->End();
 
-			m_Window->OnUpdate();
+			m_Window->OnUpdate(); //? !!! 窗口更新
 		}
 	}
 

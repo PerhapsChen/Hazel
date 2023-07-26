@@ -23,6 +23,7 @@ namespace Hazel {
 		HZ_PROFILE_FUNCTION();
 
 		s_Data = new Renderer2DStorage();
+		// Create VAO
 		s_Data->QuadVertexArray = VertexArray::Create();
 
 		float squareVertices[5 * 4] = {
@@ -31,7 +32,7 @@ namespace Hazel {
 			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
 			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
-
+		// Create VBO and bind to VAO
 		Ref<VertexBuffer> squareVB = VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 		squareVB->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" },
@@ -39,14 +40,17 @@ namespace Hazel {
 			});
 		s_Data->QuadVertexArray->AddVertexBuffer(squareVB);
 
+		// Create EBO and bind to VAO
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
 		Ref<IndexBuffer> squareIB = IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
 		s_Data->QuadVertexArray->SetIndexBuffer(squareIB);
 
+		// create Texture ( flat color )
 		s_Data->WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
+		// create Shader uniform texture
 		s_Data->TextureShader = Shader::Create("assets/shaders/Texture.glsl");
 		s_Data->TextureShader->Bind();
 		s_Data->TextureShader->SetInt("u_Texture", 0);

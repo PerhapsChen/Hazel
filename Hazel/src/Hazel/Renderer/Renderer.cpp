@@ -10,8 +10,8 @@ namespace Hazel {
 	{
 		HZ_PROFILE_FUNCTION();
 
-		RenderCommand::Init();
-		Renderer2D::Init();
+		RenderCommand::Init();  // 设置开启opengl的哪些功能，如深度测试，混合等
+		Renderer2D::Init();		// 初始的渲染对象，背景顶点、纹理、着色器等
 	}
 
 	void Renderer::Shutdown()
