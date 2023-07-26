@@ -1,6 +1,6 @@
 #pragma once
 #include "hzpch.h"
-#include "Hazel/Core.h"
+#include "Hazel/Core/Core.h"
 
 namespace Hazel {
 
@@ -30,7 +30,7 @@ enum EventCategory
 
 // 根据给定的事件类型，生成对应的函数，包括获取事件类型、获取事件名称、获取事件分类
 // static 修饰的函数，可以通过类名直接调用，不需要实例化对象
-#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type; }\
+#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
 								virtual EventType GetEventType() const override { return GetStaticType(); }\
 								virtual const char* GetName() const override { return #type; }
 
@@ -58,8 +58,6 @@ public:
 
 class EventDispatcher
 {
-    template<typename T>
-    using EventFn = std::function<bool(T&)>;
 public:
     // 使用事件构造事件分发器
     EventDispatcher(Event& event)
@@ -67,13 +65,13 @@ public:
     {
     }
 
-    template<typename T>
-    bool Dispatch(EventFn<T> func)
+    template<typename T, typename F>
+    bool Dispatch(const F& func)
     {
         // 判断事件类型是否为 T 类型，如果是，则调用 func 函数
         if (m_Event.GetEventType() == T::GetStaticType())
         {
-            m_Event.Handled = func(*(T*)&m_Event);
+            m_Event.Handled = func(static_cast<T&>(m_Event));
             return true;
         }
         return false;
