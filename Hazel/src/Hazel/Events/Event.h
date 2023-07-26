@@ -37,7 +37,7 @@ enum EventCategory
 // 根据给定的事件分类，生成对应的函数，包括获取事件分类
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
-class HAZEL_API Event
+class Event
 {
     //friend class EventDispatcher; // 事件分发器
 public:
