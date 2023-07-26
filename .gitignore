@@ -16,3 +16,4 @@ bin-int/
 **.vcxproj.user
 
 Sandbox/**.json
+Sandbox/imgui.ini
