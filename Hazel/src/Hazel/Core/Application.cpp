@@ -29,7 +29,7 @@ namespace Hazel {
 		m_Window = Window::Create(); 
 		m_Window->SetEventCallback(HZ_BIND_EVENT_FN(Application::OnEvent));
 
-		Renderer::Init();
+		Renderer::Init(); //? ! HERE !
 
 		// 初始化 Imgui层 并添加到 Overlay
 		m_ImGuiLayer = new ImGuiLayer();

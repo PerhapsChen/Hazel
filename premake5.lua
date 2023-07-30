@@ -22,11 +22,14 @@ IncludeDir["Glad"] = "Hazel/vendor/Glad/include"
 IncludeDir["ImGui"] = "Hazel/vendor/imgui"
 IncludeDir["glm"] = "Hazel/vendor/glm"
 IncludeDir["stb_image"] = "Hazel/vendor/stb_image"
+IncludeDir["tinyobjloader"] = "Hazel/vendor/tinyobjloader"
+IncludeDir["assimp"] = "Hazel/vendor/assimp/include"
 
 group "Dependencies"
 	include "Hazel/vendor/GLFW"
 	include "Hazel/vendor/Glad"
 	include "Hazel/vendor/imgui"
+	include "Hazel/vendor/assimp"
 
 group ""
 
@@ -51,6 +54,8 @@ project "Hazel"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/tinyobjloader/tiny_obj_loader.h",
+		"%{prj.name}/vendor/tinyobjloader/tiny_obj_loader.cc"
 	}
 
 	defines
@@ -66,7 +71,9 @@ project "Hazel"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.tinyobjloader}",
+		"%{IncludeDir.assimp}"
 	}
 
 	links 
@@ -74,6 +81,7 @@ project "Hazel"
 		"GLFW",
 		"Glad",
 		"ImGui",
+		"assimp",
 		"opengl32.lib"
 	}
 
@@ -122,7 +130,9 @@ project "Sandbox"
 		"Hazel/vendor/spdlog/include",
 		"Hazel/src",
 		"Hazel/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.assimp}"
+
 	}
 
 	links

@@ -18,4 +18,5 @@ namespace Hazel {
 		return nullptr;
 #endif
 	}
+
 }

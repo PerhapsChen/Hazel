@@ -2,6 +2,13 @@
 
 namespace Hazel
 {
+	enum class CursorMode
+	{
+		Normal = 0,
+		Hidden = 1,
+		Locked = 2
+	};
+
 	typedef enum class KeyCode : uint16_t
 	{
 		// From glfw3.h

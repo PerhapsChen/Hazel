@@ -21,6 +21,8 @@ namespace Hazel {
 		inline static float GetMouseX() { return s_Instance->GetMouseXImpl(); }
 		inline static float GetMouseY() { return s_Instance->GetMouseYImpl(); }
 
+		//static void SetCursorMode(CursorMode mode);
+
 		static Scope<Input> Create();
 	protected:
 		virtual bool IsKeyPressedImpl(KeyCode key) = 0;
