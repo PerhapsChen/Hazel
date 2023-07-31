@@ -127,4 +127,18 @@ namespace Hazel {
 		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t size);
 	};
 
+	class FrameBuffer
+	{
+	public:
+		virtual ~FrameBuffer() {}
+
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
+
+		virtual uint32_t GetWidth() const = 0;
+		virtual uint32_t GetHeight() const = 0;
+
+		static Ref<FrameBuffer> Create(uint32_t width, uint32_t height);
+	};
+
 }

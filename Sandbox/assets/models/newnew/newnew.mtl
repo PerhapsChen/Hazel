@@ -1,0 +1,5 @@
+# Blender 3.3.4 MTL File: 'None'
+# www.blender.org
+
+newmtl newnew
+map_Kd Texture/newnew.png

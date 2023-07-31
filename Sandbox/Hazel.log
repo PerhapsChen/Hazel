@@ -1,21 +1,23 @@
-[01:26:00] [info] HAZEL: Creating window Hazel Engine (1280, 720)
-[01:26:01] [info] HAZEL: OpenGL Info:
-[01:26:01] [info] HAZEL: - Vendor: NVIDIA Corporation
-[01:26:01] [info] HAZEL: - Renderer: NVIDIA GeForce RTX 3080 Laptop GPU/PCIe/SSE2
-[01:26:01] [info] HAZEL: - Version: 4.6.0 NVIDIA 528.33
-[01:26:01] [trace] HAZEL: assets/models/paimon/Texture/lian.jpg
-[01:26:01] [trace] HAZEL: 23712
-[01:26:01] [trace] HAZEL: assets/models/paimon/Texture/toufa.jpg
-[01:26:01] [trace] HAZEL: 3360
-[01:26:02] [trace] HAZEL: assets/models/paimon/Texture/lian.jpg
-[01:26:02] [trace] HAZEL: 30384
-[01:26:02] [trace] HAZEL: assets/models/paimon/Texture/yifu.jpg
-[01:26:02] [trace] HAZEL: 71208
-[01:26:02] [trace] HAZEL: assets/models/paimon/Texture/yifu.jpg
-[01:26:02] [trace] HAZEL: 152424
-[01:26:02] [trace] HAZEL: assets/models/paimon/Texture/toufa.jpg
-[01:26:02] [trace] HAZEL: 31728
-[01:26:02] [trace] HAZEL: assets/models/paimon/Texture/pifeng2.jpg
-[01:26:02] [trace] HAZEL: 7728
-[01:26:02] [trace] HAZEL: assets/models/paimon/Texture/biaoqing.png
-[01:26:02] [trace] HAZEL: 10608
+[18:19:57] [info] HAZEL: Creating window Hazel Engine (3D Enhanced by CPH) (1920, 1080)
+[18:19:58] [info] HAZEL: OpenGL Info:
+[18:19:58] [info] HAZEL: - Vendor: NVIDIA Corporation
+[18:19:58] [info] HAZEL: - Renderer: NVIDIA GeForce RTX 3080 Laptop GPU/PCIe/SSE2
+[18:19:58] [info] HAZEL: - Version: 4.6.0 NVIDIA 528.33
+[18:19:58] [trace] HAZEL: assets/models/newnew/Texture/newnew.png
+[18:19:58] [trace] HAZEL: 140544
+[18:19:59] [trace] HAZEL: assets/models/paimon/Texture/lian.jpg
+[18:19:59] [trace] HAZEL: 23712
+[18:19:59] [trace] HAZEL: assets/models/paimon/Texture/toufa.jpg
+[18:19:59] [trace] HAZEL: 3360
+[18:19:59] [trace] HAZEL: assets/models/paimon/Texture/lian.jpg
+[18:19:59] [trace] HAZEL: 30384
+[18:19:59] [trace] HAZEL: assets/models/paimon/Texture/yifu.jpg
+[18:19:59] [trace] HAZEL: 71208
+[18:19:59] [trace] HAZEL: assets/models/paimon/Texture/yifu.jpg
+[18:19:59] [trace] HAZEL: 152424
+[18:19:59] [trace] HAZEL: assets/models/paimon/Texture/toufa.jpg
+[18:19:59] [trace] HAZEL: 31728
+[18:19:59] [trace] HAZEL: assets/models/paimon/Texture/pifeng2.jpg
+[18:19:59] [trace] HAZEL: 7728
+[18:19:59] [trace] HAZEL: assets/models/paimon/Texture/biaoqing.png
+[18:19:59] [trace] HAZEL: 10608

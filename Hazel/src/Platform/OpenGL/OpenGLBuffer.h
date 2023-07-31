@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Hazel/Renderer/Buffer.h"
+#include "PlatForm/OpenGL/OpenGLTexture.h"
 
 namespace Hazel {
 
@@ -33,6 +34,31 @@ namespace Hazel {
 	private:
 		uint32_t m_RendererID;
 		uint32_t m_Count;
+	};
+
+	class OpenGLFrameBuffer : public FrameBuffer
+	{
+	public:
+		OpenGLFrameBuffer(uint32_t width, uint32_t height);
+		virtual ~OpenGLFrameBuffer();
+
+		virtual void Bind() const override;
+		virtual void Unbind() const override;
+
+		virtual uint32_t GetWidth() const override { return m_Width; }
+		virtual uint32_t GetHeight() const override { return m_Height; }
+
+		Ref<Texture2D> GetColorAttachmentTexture() const { return m_ColorAttachmentTexture; }
+		Ref<Texture2D> GetDepthAttachmentTexture() const { return m_DepthStencilAttachmentTexture; }
+
+	private:
+		uint32_t m_RendererID;
+		uint32_t m_Width;
+		uint32_t m_Height;
+		uint32_t m_ColorAttachment;
+		uint32_t m_DepthStencilAttachment;
+		Ref<Texture2D> m_ColorAttachmentTexture;
+		Ref<Texture2D> m_DepthStencilAttachmentTexture;
 	};
 
 }

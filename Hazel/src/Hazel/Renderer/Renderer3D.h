@@ -20,14 +20,23 @@ namespace Hazel {
 
 		// load in Init()
 		static void LoadPaimon();
+		static void LoadNewnew();
+		static void LoadPlane();
+		static void LoadLightCube();
+
+		static void SetActiveScene(int sceneIndex);
 
 		// Primitives
-		static void DrawCube(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color);
-		static void DrawMesh(const glm::vec3& position, const glm::vec3& size);
+		static void DrawLightCube(const glm::vec3& lightPos, const glm::vec3& size, const glm::vec3& color);
 
-		static void DrawPaimon(const glm::vec3& position, const glm::vec3& size,
-							   const glm::vec3& lightPos, const glm::vec3& viewPos,
-							   const bool blinn, const float gamma);
+		static void DrawPlane(const glm::vec3 position, const glm::vec3& size, const glm::vec4& color,
+							 const glm::vec3& lightPos, const glm::vec3& viewPos, const glm::vec3& lightColor,
+							 const bool blinn, const float gamma, const float lightIntensity,
+							 const float specPow);
+		static void DrawMesh(const glm::vec3& position, const glm::vec3& size,
+							 const glm::vec3& lightPos, const glm::vec3& viewPos, const glm::vec3& lightColor,
+							 const bool blinn, const float gamma, const float lightIntensity,
+							 const float specPow);
 
 	};
 

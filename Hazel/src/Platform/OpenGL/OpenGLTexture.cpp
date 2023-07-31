@@ -70,6 +70,18 @@ namespace Hazel {
 		stbi_image_free(data);
 	}
 
+	OpenGLTexture2D::OpenGLTexture2D(uint32_t glTextureID, uint32_t width, uint32_t height) :
+		m_RendererID(glTextureID), m_Width(width), m_Height(height)
+	{
+		HZ_PROFILE_FUNCTION();
+
+		glBindTexture(GL_TEXTURE_2D, glTextureID);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
 		HZ_PROFILE_FUNCTION();

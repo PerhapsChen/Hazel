@@ -37,9 +37,12 @@ in VS_OUT {
 
 uniform sampler2D diffuseTexture;
 uniform vec3 lightPos;
+uniform vec3 lightColor;
 uniform vec3 viewPos;
 uniform bool blinn;
 uniform float gamma;
+uniform float lightIntensity;
+uniform float specPow;
 
 void main()
 {
@@ -51,7 +54,7 @@ void main()
     vec3 lightDir = normalize(lightPos - fs_in.FragPos);
     vec3 normal = normalize(fs_in.Normal);
     float diff = max(dot(lightDir, normal), 0.0);
-    vec3 diffuse = diff * color;
+    vec3 diffuse = diff * color * lightColor * lightIntensity;
     // specular
     vec3 viewDir = normalize(viewPos - fs_in.FragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
@@ -59,16 +62,16 @@ void main()
     if(blinn)
     {
         vec3 halfwayDir = normalize(lightDir + viewDir);  
-        spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+        spec = pow(max(dot(normal, halfwayDir), 0.0), specPow);
     }
     else
     {
         vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), specPow);
     }
-    vec3 specular = vec3(0.3) * spec; // assuming bright white light color
-
-    FragColor = vec4(ambient + diffuse + specular, 1.0);
+    vec3 specular =  lightColor * spec * lightIntensity; // assuming bright white light color
+	
+    FragColor = vec4( ambient + diffuse + specular, 1.0);
 
 
 }
