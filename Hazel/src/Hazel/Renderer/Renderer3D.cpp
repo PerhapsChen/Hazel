@@ -19,12 +19,12 @@ namespace Hazel {
 	//	Ref<Texture2D> WhiteTexture;
 	//};
 
-	struct ShadowProps
-	{
-		uint32_t SHADOW_WIDTH;
-		uint32_t SHADOW_HEIGHT;
-		std::string shadowMethod;
-	};
+	//struct ShadowProps
+	//{
+	//	uint32_t SHADOW_WIDTH;
+	//	uint32_t SHADOW_HEIGHT;
+	//	std::string shadowMethod;
+	//};
 
 	struct RendererMeshStorage
 	{
@@ -33,6 +33,10 @@ namespace Hazel {
 		Ref<Texture2D> DiffTexture;
 	};
 
+	static Ref<Shader> s_OnlyBackShader;
+	static Ref<Shader> s_LightViewDepthShader;
+	static Ref<FrameBuffer> s_DepthFrameBuffer;
+	
 	//static Renderer3DStorage* s_Data;
 	static std::vector<RendererMeshStorage*> s_DataPaimon;
 	static std::vector<RendererMeshStorage*> s_DataNewnew;	
@@ -85,8 +89,9 @@ namespace Hazel {
 			int flipV = 0;
 			renderData->DiffTexture = Texture2D::Create(texPath, flipV);
 			HZ_CORE_TRACE(texPath);
-			renderData->TextureShader = Shader::Create("assets/shaders/AdvancedLighting.glsl");
+			renderData->TextureShader = Shader::Create("assets/shaders/LightingWithShadow_Mesh.glsl");
 			renderData->TextureShader->Bind();
+			renderData->DiffTexture->Bind(0);
 			renderData->TextureShader->SetInt("diffuseTexture", 0);
 
 			HZ_CORE_TRACE("{0}", mesh.VertexBufferSize());
@@ -123,9 +128,11 @@ namespace Hazel {
 			int flipV = 0;
 			renderData->DiffTexture = Texture2D::Create(texPath, flipV);
 			HZ_CORE_TRACE(texPath);
-			renderData->TextureShader = Shader::Create("assets/shaders/AdvancedLighting.glsl");
+			renderData->TextureShader = Shader::Create("assets/shaders/LightingWithShadow_Mesh.glsl");
 			renderData->TextureShader->Bind();
+			renderData->DiffTexture->Bind(0);
 			renderData->TextureShader->SetInt("diffuseTexture", 0);
+			renderData->TextureShader->Unbind();
 
 			HZ_CORE_TRACE("{0}", mesh.VertexBufferSize());
 
@@ -161,11 +168,13 @@ namespace Hazel {
 		s_DataPlane->DiffTexture = Texture2D::Create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		s_DataPlane->DiffTexture->SetData(&whiteTextureData, sizeof(uint32_t));
-
+		
 		// create Shader uniform texture
-		s_DataPlane->TextureShader = Shader::Create("assets/shaders/Texture.glsl");
+		s_DataPlane->TextureShader = Shader::Create("assets/shaders/LightingWithShadow_Plane.glsl");
 		s_DataPlane->TextureShader->Bind();
-		s_DataPlane->TextureShader->SetInt("u_Texture", 0);
+		s_DataPlane->DiffTexture->Bind(0);
+		s_DataPlane->TextureShader->SetInt("diffuseTexture", 0);
+		s_DataPlane->TextureShader->Unbind();
 	}
 
 	static RendererMeshStorage* s_DataLightCube;
@@ -248,34 +257,16 @@ namespace Hazel {
 	void Renderer3D::Init()
 	{
 		HZ_PROFILE_FUNCTION();
-
-		//? SHADOW
-		//const GLuint SHADOW_WIDTH = 8192, SHADOW_HEIGHT = 8192;
-		//GLuint DepthFrameBuffer;
-		//glGenFramebuffers(1, &DepthFrameBuffer);
-
-		//GLuint DepthTexture;
-		//glGenTextures(1, &DepthTexture);
-		//glBindTexture(GL_TEXTURE_2D, DepthTexture);
-
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 
-		//	0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
-		//glBindFramebuffer(GL_FRAMEBUFFER, DepthFrameBuffer);
-		//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthTexture, 0);
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		//? SHADOW
-
-
 		LoadLightCube();
 		LoadPlane();
 		LoadNewnew();
 		LoadPaimon();
-		
+
+		s_OnlyBackShader = Shader::Create("assets/shaders/OnlyBack.glsl");
+
+		s_LightViewDepthShader = Shader::Create("assets/shaders/LightViewDepth.glsl");
+		s_DepthFrameBuffer = FrameBuffer::Create(4096, 4096);
+
 		//Model cube("assets/models/spot/Crate")
 	}
 
@@ -292,6 +283,8 @@ namespace Hazel {
 
 	void Renderer3D::BeginScene(const PerspectiveCamera3D& camera)
 	{
+		// 只是给Shader传参
+
 		HZ_PROFILE_FUNCTION();
 
 		s_DataPlane->TextureShader->Bind(); //！
@@ -307,6 +300,9 @@ namespace Hazel {
 			d->TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 		}
 
+		s_OnlyBackShader->Bind();
+		s_OnlyBackShader->SetMat4("u_View", camera.GetViewMatrix());
+		s_OnlyBackShader->SetMat4("u_Projection", camera.GetProjectionMatrix());
 	}
 
 	void Renderer3D::EndScene()
@@ -314,13 +310,6 @@ namespace Hazel {
 		HZ_PROFILE_FUNCTION();
 
 	}
-
-	//void Renderer3D::DrawCube(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color)
-	//{
-	//	HZ_PROFILE_FUNCTION();
-
-	//}
-
 
 	void Renderer3D::DrawLightCube(const glm::vec3& lightPos, const glm::vec3& size, const glm::vec3& color)
 	{
@@ -330,22 +319,141 @@ namespace Hazel {
 		s_DataLightCube->TextureShader->SetFloat3("u_Color", color);
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), lightPos) * glm::scale(glm::mat4(1.0f), { size.x, size.y, size.z });
 		s_DataLightCube->TextureShader->SetMat4("u_Transform", transform);
+
 		s_DataLightCube->VertexArray->Bind();
+		
 		RenderCommand::DrawIndexed(s_DataLightCube->VertexArray);
 	}
 
-	void Renderer3D::DrawPlane(const glm::vec3 position, const glm::vec3& size, const glm::vec4& color,
+	//! Frame Buffer
+	void Renderer3D::FrameBufferMesh(const glm::vec3& position, const glm::vec3& size,
+		const glm::vec3& lightPos, const glm::vec3& viewPos, const glm::vec3& lightColor,
+		const bool blinn, const float gamma, const float lightIntensity, const float specPow, 
+		const glm::vec4 orthParas)
+	{
+		HZ_PROFILE_FUNCTION();
+		auto& s_Data = *s_ActvieScene;
+
+		glm::mat4 lightProjection = glm::ortho(orthParas.r, -orthParas.r, orthParas.g, -orthParas.g, orthParas.b, orthParas.a);
+		glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, size.z });
+		glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+
+		s_LightViewDepthShader->Bind();
+		s_LightViewDepthShader->SetMat4("transform", transform);
+		s_LightViewDepthShader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+		s_DepthFrameBuffer->Bind();
+
+		for (auto& d : s_Data)
+		{
+			d->VertexArray->Bind();
+			RenderCommand::DrawIndexed(d->VertexArray); // 这里会解除绑定texture
+		}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glViewport(0, 0, 1920, 1080);
+	}
+
+	void Renderer3D::DrawMesh(const glm::vec3& position, const glm::vec3& size,
+		const glm::vec3& lightPos, const glm::vec3& viewPos, const glm::vec3& lightColor,
+		const bool blinn, const float gamma, const float lightIntensity,
+		const float specPow, const int shadowMethod, const glm::vec4 orthParas,
+		const bool autoBias, const float shadowBias, const float outlineScale)
+	{
+		HZ_PROFILE_FUNCTION();
+		auto& s_Data = *s_ActvieScene;
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+
+		// Back Only Pass
+		s_OnlyBackShader->Bind();
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * 
+			glm::scale(glm::mat4(1.0f), { size.x, size.y, size.z });
+		s_OnlyBackShader->SetMat4("u_Transform", transform);
+		s_OnlyBackShader->SetFloat3("lightPos", lightPos);
+		s_OnlyBackShader->SetFloat3("lightColor", lightColor);
+		s_OnlyBackShader->SetFloat3("viewPos", viewPos);
+		s_OnlyBackShader->SetFloat("gamma", gamma);
+		s_OnlyBackShader->SetFloat("outlineScale", outlineScale);
+
+		for (auto& d : s_Data)
+		{
+			d->VertexArray->Bind();
+			d->DiffTexture->Bind();
+			s_OnlyBackShader->SetInt("diffuseTexture", 0);
+			RenderCommand::DrawIndexed(d->VertexArray);
+		}
+
+		// Enf Of BackLine;
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+
+		glm::mat4 lightProjection = glm::ortho(orthParas.r, -orthParas.r, orthParas.g, -orthParas.g, orthParas.b, orthParas.a);
+		glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+		glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+
+		for (auto& d : s_Data)
+		{
+			d->TextureShader->Bind(); // use shader
+
+			d->DiffTexture->Bind(0); 
+
+			s_DepthFrameBuffer->GetDepthAttachmentTexture()->Bind(1);
+
+			d->TextureShader->SetInt("shadowMap", 1);
+
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, size.z });
+			
+			d->TextureShader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+			
+			d->TextureShader->SetMat4("u_Transform", transform);
+			d->TextureShader->SetFloat3("lightPos", lightPos);
+			d->TextureShader->SetFloat3("lightColor", lightColor);
+			d->TextureShader->SetFloat3("viewPos", viewPos);
+			d->TextureShader->SetInt("blinn", blinn);
+			d->TextureShader->SetFloat("gamma", gamma);
+			d->TextureShader->SetFloat("specPow", specPow);
+			d->TextureShader->SetFloat("lightIntensity", lightIntensity);
+			d->TextureShader->SetInt("shadowMethod", shadowMethod);
+
+			d->TextureShader->SetInt("autoBias", autoBias);
+			d->TextureShader->SetFloat("shadowBias", shadowBias);
+
+			d->VertexArray->Bind();
+
+			RenderCommand::DrawIndexed(d->VertexArray);
+		}
+
+		glDisable(GL_CULL_FACE);
+	}
+
+	void Renderer3D::DrawPlane(const glm::vec3& position, const glm::vec3& size,
 							   const glm::vec3& lightPos, const glm::vec3& viewPos, const glm::vec3& lightColor,
 							   const bool blinn, const float gamma, const float lightIntensity,
-							   const float specPow)
+							   const float specPow, const int shadowMethod, const glm::vec4 orthParas,
+							   const bool autoBias, const float shadowBias, const float filterScale)
 	{
 		HZ_PROFILE_FUNCTION();
 
+		glm::mat4 lightProjection = glm::ortho(orthParas.r, -orthParas.r, orthParas.g, -orthParas.g, orthParas.b, orthParas.a);
+		glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+		glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+
 		s_DataPlane->TextureShader->Bind();
-		s_DataPlane->DiffTexture->Bind();
-		s_DataPlane->TextureShader->SetFloat4("u_Color", color);
+		s_DataPlane->DiffTexture->Bind(0);
+
+		s_DepthFrameBuffer->GetDepthAttachmentTexture()->Bind(1);
+
+		s_DataPlane->TextureShader->SetInt("shadowMap", 1);
+
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, size.z });
 		s_DataPlane->TextureShader->SetMat4("u_Transform", transform);
+
+		s_DataPlane->TextureShader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
 
 		s_DataPlane->TextureShader->SetFloat3("lightPos", lightPos);
 		s_DataPlane->TextureShader->SetFloat3("lightColor", lightColor);
@@ -354,43 +462,18 @@ namespace Hazel {
 		s_DataPlane->TextureShader->SetFloat("gamma", gamma);
 		s_DataPlane->TextureShader->SetFloat("specPow", specPow);
 		s_DataPlane->TextureShader->SetFloat("lightIntensity", lightIntensity);
+		s_DataPlane->TextureShader->SetInt("shadowMethod", shadowMethod);
+
+		s_DataPlane->TextureShader->SetInt("autoBias", autoBias);
+		s_DataPlane->TextureShader->SetFloat("shadowBias", shadowBias);
+
+		s_DataPlane->TextureShader->SetFloat("filterScale", filterScale);
 
 		s_DataPlane->VertexArray->Bind();
 		RenderCommand::DrawIndexed(s_DataPlane->VertexArray);
 	}
 
 
-	void Renderer3D::DrawMesh(const glm::vec3& position, const glm::vec3& size, 
-		const glm::vec3& lightPos, const glm::vec3& viewPos, const glm::vec3& lightColor,
-		const bool blinn, const float gamma, const float lightIntensity,
-		const float specPow)
-	{
-		HZ_PROFILE_FUNCTION();
-		auto& s_Data = *s_ActvieScene;
 
-		for (auto& d : s_Data)
-		{
-			//HZ_CORE_TRACE("{good.}");
-			//d->TextureShader->SetFloat4("u_Color", glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-			//d->TextureShader->SetFloat("u_TilingFactor", 1.0f);
-			d->TextureShader->Bind();
-			d->DiffTexture->Bind();
-
-			glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-				* glm::scale(glm::mat4(1.0f), { size.x, size.y, size.z });
-
-			d->TextureShader->SetMat4("u_Transform", transform);
-			d->TextureShader->SetFloat3("lightPos", lightPos);
-			d->TextureShader->SetFloat3("lightColor", lightColor);
-			d->TextureShader->SetFloat3("viewPos", viewPos );
-			d->TextureShader->SetInt("blinn", blinn);
-			d->TextureShader->SetFloat("gamma", gamma);
-			d->TextureShader->SetFloat("specPow", specPow);
-			d->TextureShader->SetFloat("lightIntensity", lightIntensity);
-			d->VertexArray->Bind();
-			RenderCommand::DrawIndexed(d->VertexArray);
-		}
-
-	}
 
 }

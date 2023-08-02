@@ -1,0 +1,6 @@
+[21:44:08] [info] HAZEL: Creating window Hazel Engine (3D Enhanced by CPH) (1920, 1080)
+[21:44:09] [info] HAZEL: OpenGL Info:
+[21:44:09] [info] HAZEL: - Vendor: NVIDIA Corporation
+[21:44:09] [info] HAZEL: - Renderer: NVIDIA GeForce RTX 3080 Laptop GPU/PCIe/SSE2
+[21:44:09] [info] HAZEL: - Version: 4.6.0 NVIDIA 528.33
+[21:44:09] [error] HAZEL: Could not open file 'assets/shaders/LightCube.glsl'

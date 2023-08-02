@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Hazel/Renderer/Texture.h>
+
 namespace Hazel {
 
 	enum class ShaderDataType
@@ -137,6 +139,7 @@ namespace Hazel {
 
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
+		virtual Ref<Texture2D> GetDepthAttachmentTexture() const = 0;
 
 		static Ref<FrameBuffer> Create(uint32_t width, uint32_t height);
 	};

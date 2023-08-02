@@ -84,21 +84,37 @@ namespace Hazel {
 		HZ_PROFILE_FUNCTION();
 
 		glGenFramebuffers(1, &m_RendererID);
+		//glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+
+
+		// 创建深度附件
+		glGenTextures(1, &m_DepthAttachment);
+		glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
+		m_DepthAttachmentTexture = Texture2D::Create(m_DepthAttachment, width, height);
 
-		// 创建颜色附件
-		glGenTextures(1, &m_ColorAttachment);
-		glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
-		m_ColorAttachmentTexture = Texture2D::Create(m_ColorAttachment, width, height);
 
-		// 创建深度和模板附件
-		glGenRenderbuffers(1, &m_DepthStencilAttachment);
-		glBindRenderbuffer(GL_RENDERBUFFER, m_DepthStencilAttachment);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilAttachment);
-		m_ColorAttachmentTexture = Texture2D::Create(m_ColorAttachment, width, height);
+		//// 创建颜色附件
+		//glGenTextures(1, &m_ColorAttachment);
+		//glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+		//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
+		//m_ColorAttachmentTexture = Texture2D::Create(m_ColorAttachment, width, height);
+
+		//// 创建深度和模板附件
+		//glGenRenderbuffers(1, &m_DepthStencilAttachment);
+		//glBindRenderbuffer(GL_RENDERBUFFER, m_DepthStencilAttachment);
+		//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+		////glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH24_STENCIL8, GL_UNSIGNED_BYTE, nullptr);
+		//glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilAttachment);
+		//m_ColorAttachmentTexture = Texture2D::Create(m_DepthStencilAttachment, width, height);
 
 		// 检查帧缓冲是否完整
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -113,15 +129,18 @@ namespace Hazel {
 		HZ_PROFILE_FUNCTION();
 
 		glDeleteFramebuffers(1, &m_RendererID);
-		glDeleteTextures(1, &m_ColorAttachment);
-		glDeleteRenderbuffers(1, &m_DepthStencilAttachment);
+		glDeleteTextures(1, &m_DepthAttachment);
+		//glDeleteTextures(1, &m_ColorAttachment);
+		//glDeleteRenderbuffers(1, &m_DepthStencilAttachment);
 	}
 
 	void OpenGLFrameBuffer::Bind() const
 	{
 		HZ_PROFILE_FUNCTION();
-		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+
 		glViewport(0, 0, m_Width, m_Height);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 
 	void OpenGLFrameBuffer::Unbind() const

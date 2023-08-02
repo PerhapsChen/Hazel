@@ -48,17 +48,20 @@ namespace Hazel {
 		virtual uint32_t GetWidth() const override { return m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
 
-		Ref<Texture2D> GetColorAttachmentTexture() const { return m_ColorAttachmentTexture; }
-		Ref<Texture2D> GetDepthAttachmentTexture() const { return m_DepthStencilAttachmentTexture; }
+		virtual Ref<Texture2D> GetDepthAttachmentTexture() const { return m_DepthAttachmentTexture; }
+		//Ref<Texture2D> GetColorAttachmentTexture() const { return m_ColorAttachmentTexture; }
+		//Ref<Texture2D> GetDepthStencilAttachmentTexture() const { return m_DepthStencilAttachmentTexture; }
 
 	private:
 		uint32_t m_RendererID;
 		uint32_t m_Width;
 		uint32_t m_Height;
-		uint32_t m_ColorAttachment;
-		uint32_t m_DepthStencilAttachment;
-		Ref<Texture2D> m_ColorAttachmentTexture;
-		Ref<Texture2D> m_DepthStencilAttachmentTexture;
+		uint32_t m_DepthAttachment;
+		//uint32_t m_ColorAttachment;
+		//uint32_t m_DepthStencilAttachment;
+		Ref<Texture2D> m_DepthAttachmentTexture;
+		//Ref<Texture2D> m_ColorAttachmentTexture;
+		//Ref<Texture2D> m_DepthStencilAttachmentTexture;
 	};
 
 }

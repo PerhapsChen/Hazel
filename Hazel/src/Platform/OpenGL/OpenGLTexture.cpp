@@ -75,11 +75,7 @@ namespace Hazel {
 	{
 		HZ_PROFILE_FUNCTION();
 
-		glBindTexture(GL_TEXTURE_2D, glTextureID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//glBindTexture(GL_TEXTURE_2D, glTextureID);
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()
@@ -101,7 +97,10 @@ namespace Hazel {
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
 		HZ_PROFILE_FUNCTION();
-
 		glBindTextureUnit(slot, m_RendererID);
+
+		// maybe same
+		//glActiveTexture(GL_TEXTURE0 + slot);
+		//glBindTexture(GL_TEXTURE_2D, m_RendererID);
 	}
 }
